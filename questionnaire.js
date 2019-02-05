@@ -85,7 +85,9 @@ const questionnaire = {
       type: "text",
       name: "fahrzeit",
       title: "Wie viele Minuten brauchst du von benannter Wohnung zur HGB?",
-      inputType: "number"
+      description: `Für Pendler_innen: Diese Frage bezieht sich auf oben benannten "Hauptwohnsitz", nicht deine eventuell existierende Unterkunft in Leipzig.`,
+      inputType: "number",
+      unit: "Minuten"
     },
     {
       visibleIf: "({hgb} notempty and {hgb} != \"ja\" and {wohnort} notempty and ({wohnort} != \"andere\" or {other-wohnort} notempty)) or {fahrzeit} notempty",
@@ -136,13 +138,38 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "people",
-      title: "Wie viele Menschen inklusive dir wohnen in dem/der {wohnungstyp}?"
+      title: "Wie viele Menschen *inklusive dir* wohnen in dem/der {wohnungstyp}?"
     },
     {
-      visibleIf: "{people} notempty",
+      visibleIf: "{people} notempty and {people} > 1",
+      type: "checkbox",
+      name: "mit-wem",
+      title: "In welchem formalen Verhältnis stehst du zu deinen Mitbewohner_innen?",
+      description: "Mehrfachnennungen sind möglich.",
+      choices: [
+        {
+          value: "mitbewohner",
+          text: "Mitbewohner\\_innen / Freund\\_innen"
+        },
+        {
+          value: "partner",
+          text: "Partner_in"
+        },
+        {
+          value: "familie",
+          text: "Kinder"
+        },
+        {
+          value: "verwandte",
+          text: "Verwandte (auch Eltern)"
+        },
+      ]
+    },
+    {
+      visibleIf: "{people} = 1 or {mit-wem} notempty",
       type: "radiogroup",
       name: "vertrag",
-      title: "Art des Mietvertrags",
+      title: "In was für einem Vertragsverhältnis bist du?",
       choices: [
         {
           value: "hauptmieter",
@@ -154,7 +181,7 @@ const questionnaire = {
         },
         {
           value: "untermieter-befristet",
-          text: "Untermieter_in (befristet) / Zwischenmieter_in"
+          text: "Untermieter\\_in (befristet) / Zwischenmieter\\_in"
         },
         {
           value: "eigentümer",
@@ -174,10 +201,28 @@ const questionnaire = {
       visibleIf: "{vertrag} notempty",
       type: "text",
       inputType: "number",
+      name: "platz-gesamt",
+      title: "Wie viel Quadratmeter hat das/die {wohnungstyp}?",
+      unit: "m²"
+    },
+    {
+      visibleIf: `{platz-gesamt} notempty and ({wohnungstyp} = "wg" or {wohnungstyp} = "hausprojekt")`,
+      type: "text",
+      inputType: "number",
+      name: "platz-privat",
+      title: "Wie viel Quadratmeter hast du für dich?",
+      description: "Dies bezieht sich auf Raum den nur du verwendest - etwa ein Zimmer in einer WG, aber nicht das Wohnzimmer.",
+      unit: "m²"
+    },
+    {
+      visibleIf: `{platz-privat} notempty or ({wohnungstyp} != "wg" and {wohnungstyp} != "hausprojekt" and {platz-gesamt} notempty)`,
+      type: "text",
+      inputType: "number",
       name: "miete",
       title: "Wie viel kostet dich deine Wohnsituation monatlich, inklusive alles?",
       description: "\"Inklusive alles\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
-      "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen."
+      "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen.",
+      unit: "€"
     },
     {
       visibleIf: "{miete} notempty",
@@ -187,12 +232,13 @@ const questionnaire = {
       title: "Wie viel Einkommen hast du monatlich?",
       description: "Dies schließt BAFöG, Stipendien, Wohngeld, et cetera ein - einfach alles. " +
       "Diese Frage ist notwendig um den Anteil der Miete am Einkommen zu ermitteln, einem in der " +
-      "aktuellen Forschung wichtigen Wert."
+      "aktuellen Forschung wichtigen Wert.",
+      unit: "€"
     },
     {
       type: "radiogroup",
       name: "atelier",
-      visibleIf: "{einkommen} notempty and {wohnungstyp} != \"atelier\"",
+      visibleIf: `{einkommen} notempty and {wohnungstyp} != "atelier"`,
       title: "Hast du ein Atelier?",
       description: "Atelier wäre an dieser Stelle etwa ein separater Raum in einer Wohnung, ein mit Kommiliton_innen gemietetes Objekt, oder ähnlich." +
       "Nicht gemeint ist etwa der Klassenraum.",
@@ -212,7 +258,7 @@ const questionnaire = {
       ]
     },
     {
-      visibleIf: "{atelier} = \"ja\"",
+      visibleIf: `{atelier} = "ja"`,
       type: "text",
       inputType: "number",
       name: "atelier-miete",
@@ -221,7 +267,7 @@ const questionnaire = {
       "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen."
     },
     {
-      visibleIf: "({atelier} notempty and {atelier} != \"ja\") or {atelier-miete} notempty or {wohnungstyp} = \"atelier\" and {einkommen} notempty",
+      visibleIf: `({atelier} notempty and {atelier} != "ja") or {atelier-miete} notempty or {wohnungstyp} = "atelier" and {einkommen} notempty`,
       type: "html",
       name: "submit",
       html: "<h1>Fertig?</h1>" +
@@ -250,7 +296,7 @@ const questionnaire = {
               Eine Weitergabe an Dritte (abgesehen von einer möglichen Öffentlichkeit wie oben beschrieben) findet nicht statt.
             </p>
             <p>
-              Dies ist keine in Auftrag gegebene Umfrage.
+              Dies ist keine in Auftrag gegebene Umfrage / Studie. Es besteht kein Anspruch von Wissenschaftlichkeit.
             </p>
             <p>
               Diese Webseite verwendet keine Cookies.
@@ -258,9 +304,9 @@ const questionnaire = {
             <p>
               Dieses Projekt ist Open Source.
               Hier findest du den Quelltext für
-              <a href="https://github.com/neopostmodern/fragen">die Webseite</a>
-              und für
-              <a href="https://github.com/neopostmodern/antworten">den Server</a>.
+              <a href="https://github.com/neopostmodern/fragen">die Webseite</a>,
+              <a href="https://github.com/neopostmodern/antworten">den Server</a>,
+              und für <a href="https://github.com/neopostmodern/antworten/blob/master/questionnaire.js">diesen Fragebogen</a>.
             </p>
             <p>
               Bei Fragen oder Zweifeln <a href="mailto:schoell@hgb-leipzig.de">schreib mir eine E-Mail</a>!
