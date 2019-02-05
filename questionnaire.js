@@ -225,7 +225,15 @@ const questionnaire = {
       unit: "€"
     },
     {
-      visibleIf: "{miete} notempty",
+      visibleIf: `{miete} notempty and ({wohnungstyp} = "wg" or {wohnungstyp} = "wohnung")`,
+      type: "text",
+      inputType: "number",
+      name: "zimmer",
+      title: "Wie viele Zimmer hat die {wohnungstyp}?",
+      description: "Dies ist inklusive Badezimmer und Küche, aber nicht Flur."
+    },
+    {
+      visibleIf: `{zimmer} notempty or ({miete} notempty and {wohnungstyp} != "wohnung" and {wohnungstyp} != "wg")`,
       type: "text",
       inputType: "number",
       name: "einkommen",
@@ -264,7 +272,8 @@ const questionnaire = {
       name: "atelier-miete",
       title: "Wie viel kostet dich deine Ateliersituation monatlich, inklusive alles?",
       description: "\"Inklusive alles\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
-      "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen."
+      "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen.",
+      unit: "€"
     },
     {
       visibleIf: `({atelier} notempty and {atelier} != "ja") or {atelier-miete} notempty or {wohnungstyp} = "atelier" and {einkommen} notempty`,
