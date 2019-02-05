@@ -23,6 +23,7 @@ mongoClient.connect(function(error, client) {
   app.post("/antwort/:surveyName", (request, response) => {
     const surveyName = sanitize(request.params.surveyName);
     const data = sanitize(request.body);
+    data.receivedAt = new Date();
     database.collection(surveyName).insert(data, (error, result) => {
       if (error) {
         console.error(error);
