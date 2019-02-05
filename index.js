@@ -7,7 +7,7 @@ const questionnaire = require('./questionnaire');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 const port = 4000;
 
@@ -36,7 +36,7 @@ mongoClient.connect(function(error, client) {
   app.get("/fragen/:surveyName", (request, response) => {
     const surveyName = sanitize(request.params.surveyName);
 
-    if (surveyName !== 'wohnen') {
+    if (surveyName !== 'wohnen-hgb') {
       response.sendStatus(404);
       return;
     }
