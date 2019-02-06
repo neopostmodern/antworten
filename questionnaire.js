@@ -3,6 +3,7 @@ const questionnaire = {
   title: "Umfrage zur Wohnungssituation",
   questionTitleTemplate: "{title}",
   showProgressBar: "top",
+  clearInvisibleValues: "onHidden",
   elements: [
     {
       type: "radiogroup",
@@ -11,15 +12,25 @@ const questionnaire = {
       choices: [
         {
           value: "ja",
-          text: "Ja"
+          text: "Ja",
+          replacementMap: {
+            "temp_hgb": "bist"
+          }
         },
         {
           value: "ehemalige",
-          text: "Ehemalige_r"
+          text: "Ehemalige_r",
+          replacementMap: {
+            "temp_hgb": "warst",
+            "temp_job": " jetzt"
+          }
         },
         {
           value: "nein",
-          text: "Nein"
+          text: "Nein",
+          replacementMap: {
+            "temp_job": ""
+          }
         }
       ]
     },
@@ -27,7 +38,7 @@ const questionnaire = {
       type: "radiogroup",
       name: "hgb-position",
       visibleIf: "{hgb} notempty and {hgb} != \"nein\"",
-      title: "In welcher Position bist/warst du an der HGB?",
+      title: "In welcher Position [[hgb:temp_hgb]] du an der HGB?",
       choices: [
         {
           value: "student",
@@ -44,25 +55,68 @@ const questionnaire = {
       ]
     },
     {
-      type: "text",
-      name: "other-position",
-      visibleIf: "{hgb} = \"nein\"",
-      title: "Was und wo studierst oder arbeitest du?"
+      type: "radiogroup",
+      name: "other-job-type",
+      visibleIf: `{hgb} = "nein" or ({hgb} = "ehemalige" and {hgb-position} notempty)`,
+      title: "Was machst du[[hgb:temp_job]]?",
+      choices: [
+        {
+          value: "arbeiten",
+          text: "Arbeiten (angestellt)",
+          replacementMap: {
+            "du": "arbeitest"
+          }
+        },
+        {
+          value: "frei",
+          text: "Arbeiten (selbstständig / frei)",
+          replacementMap: {
+            "du": "machst"
+          }
+        },
+        {
+          value: "studieren",
+          text: "Studieren",
+          replacementMap: {
+            "du": "studierst"
+          }
+        },
+        {
+          value: "sonstige",
+          text: "Sonstige",
+          replacementMap: {
+            "du": "machst"
+          }
+        },
+      ]
     },
     {
-      visibleIf: "{other-position} notempty or {hgb-position} notempty",
+      type: "text",
+      name: "other-position",
+      visibleIf: `{other-job-type} notempty`,
+      title: "Was [[other-job-type:du]] du?"
+    },
+    {
+      type: "text",
+      name: "other-institution",
+      visibleIf: `{other-position} notempty and {other-job-type} != "frei" and {other-job-type} != "sonstige"`,
+      title: "Wo [[other-job-type:du]] du?"
+    },
+    {
+      visibleIf: `({hgb} = "ja" and {hgb-position} notempty) or {other-institution} notempty or ({other-position} notempty 
+      and ({other-job-type} = "frei" or {other-job-type} = "sonstige"))`,
       type: "radiogroup",
       name: "wohnort",
       title: "Wo wohnst du?",
       description: "Im Sinne des persönlich empfundenen Hauptwohnsitzes.",
       choices: [
         {
-          value: "berlin",
-          text: "Berlin"
-        },
-        {
           value: "leipzig",
           text: "Leipzig"
+        },
+        {
+          value: "berlin",
+          text: "Berlin"
         },
         {
           value: "halle",
@@ -84,7 +138,7 @@ const questionnaire = {
       visibleIf: "{hgb} = \"ja\" and {wohnort} notempty and ({wohnort} != \"andere\" or {other-wohnort} notempty)",
       type: "text",
       name: "fahrzeit",
-      title: "Wie viele Minuten brauchst du von benannter Wohnung zur HGB?",
+      title: "Wie viele Minuten brauchst du von dort zur HGB?",
       description: `Für Pendler_innen: Diese Frage bezieht sich auf oben benannten "Hauptwohnsitz", nicht deine eventuell existierende Unterkunft in Leipzig.`,
       inputType: "number",
       unit: "Minuten"
@@ -97,23 +151,43 @@ const questionnaire = {
       choices: [
         {
           value: "wg",
-          text: "Wohngemeinschaft (WG)"
+          text: "Wohngemeinschaft (WG)",
+          replacementMap: {
+            nominativ: "die WG",
+            dativ: "der WG"
+          }
         },
         {
           value: "wohnung",
-          text: "Wohnung (alleine oder mit Partner/Familie)"
+          text: "Wohnung (alleine oder mit Partner/Familie)",
+          replacementMap: {
+            nominativ: "die Wohnung",
+            dativ: "der Wohnung"
+          }
         },
         {
           value: "hausprojekt",
-          text: "Hausprojekt"
+          text: "Hausprojekt",
+          replacementMap: {
+            nominativ: "das Hausprojekt",
+            dativ: "dem Hausprojekt"
+          }
         },
         {
           value: "atelier",
-          text: "Atelier"
+          text: "Atelier",
+          replacementMap: {
+            nominativ: "das Atelier",
+            dativ: "dem Atelier"
+          }
         },
         {
           value: "haus",
-          text: "Haus/Haushälfte"
+          text: "Haus/Haushälfte",
+          replacementMap: {
+            nominativ: "das Haus / die Haushälfte",
+            dativ: "dem Haus / der Haushälfte"
+          }
         }
       ]
     },
@@ -138,7 +212,7 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "people",
-      title: "Wie viele Menschen *inklusive dir* wohnen in dem/der {wohnungstyp}?"
+      title: "Wie viele Menschen *inklusive dir* wohnen in [[wohnungstyp:dativ]]?"
     },
     {
       visibleIf: "{people} notempty and {people} > 1",
@@ -198,11 +272,19 @@ const questionnaire = {
       ]
     },
     {
-      visibleIf: "{vertrag} notempty",
+      visibleIf: `{vertrag} notempty and ({wohnungstyp} = "wg" or {wohnungstyp} = "wohnung")`,
+      type: "text",
+      inputType: "number",
+      name: "zimmer",
+      title: "Wie viele Zimmer hat [[wohnungstyp:nominativ]]?",
+      description: "Dies ist exklusive Badezimmer, Küche, oder Flur."
+    },
+    {
+      visibleIf: `{zimmer} notempty or ({vertrag} notempty and {wohnungstyp} != "wg" and {wohnungstyp} != "wohnung")`,
       type: "text",
       inputType: "number",
       name: "platz-gesamt",
-      title: "Wie viel Quadratmeter hat das/die {wohnungstyp}?",
+      title: "Wie viel Quadratmeter hat [[wohnungstyp:nominativ]]?",
       unit: "m²"
     },
     {
@@ -225,20 +307,12 @@ const questionnaire = {
       unit: "€"
     },
     {
-      visibleIf: `{miete} notempty and ({wohnungstyp} = "wg" or {wohnungstyp} = "wohnung")`,
-      type: "text",
-      inputType: "number",
-      name: "zimmer",
-      title: "Wie viele Zimmer hat die {wohnungstyp}?",
-      description: "Dies ist inklusive Badezimmer und Küche, aber nicht Flur."
-    },
-    {
-      visibleIf: `{zimmer} notempty or ({miete} notempty and {wohnungstyp} != "wohnung" and {wohnungstyp} != "wg")`,
+      visibleIf: `{miete} notempty`,
       type: "text",
       inputType: "number",
       name: "einkommen",
       title: "Wie viel Einkommen hast du monatlich?",
-      description: "Dies schließt BAFöG, Stipendien, Wohngeld, et cetera ein - einfach alles. " +
+      description: "Dies schließt BAföG, Stipendien, Wohngeld, Geld von deinen Eltern, et cetera ein - einfach alles. " +
       "Diese Frage ist notwendig um den Anteil der Miete am Einkommen zu ermitteln, einem in der " +
       "aktuellen Forschung wichtigen Wert.",
       unit: "€"
@@ -248,7 +322,7 @@ const questionnaire = {
       name: "atelier",
       visibleIf: `{einkommen} notempty and {wohnungstyp} != "atelier"`,
       title: "Hast du ein Atelier?",
-      description: "Atelier wäre an dieser Stelle etwa ein separater Raum in einer Wohnung, ein mit Kommiliton_innen gemietetes Objekt, oder ähnlich." +
+      description: "Atelier wäre an dieser Stelle etwa ein separater Raum in einer Wohnung, ein mit Kommiliton_innen gemietetes Objekt, oder ähnliches. " +
       "Nicht gemeint ist etwa der Klassenraum.",
       choices: [
         {
