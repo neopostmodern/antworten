@@ -105,46 +105,23 @@ const questionnaire = {
     {
       visibleIf: `({hgb} = "ja" and {hgb-position} notempty) or {other-institution} notempty or ({other-position} notempty 
       and ({other-job-type} = "frei" or {other-job-type} = "sonstige"))`,
-      type: "radiogroup",
-      name: "wohnort",
-      title: "Wo wohnst du?",
-      description: "Im Sinne des persönlich empfundenen Hauptwohnsitzes.",
-      choices: [
-        {
-          value: "leipzig",
-          text: "Leipzig"
-        },
-        {
-          value: "berlin",
-          text: "Berlin"
-        },
-        {
-          value: "halle",
-          text: "Halle"
-        },
-        {
-          value: "andere",
-          text: "Andere"
-        }
-      ]
-    },
-    {
       type: "text",
-      name: "other-wohnort",
-      visibleIf: "{wohnort} = \"andere\"",
-      title: "Wo denn?"
+      inputType: "tel",
+      name: "wohnort",
+      title: "Wo wohnst du? (Postleitzahl)",
+      description: "Im Sinne des persönlich empfundenen Hauptwohnsitzes."
     },
     {
-      visibleIf: "{hgb} = \"ja\" and {wohnort} notempty and ({wohnort} != \"andere\" or {other-wohnort} notempty)",
+      visibleIf: `{hgb} = "ja" and {wohnort} notempty`,
       type: "text",
       name: "fahrzeit",
-      title: "Wie viele Minuten brauchst du von dort zur HGB?",
+      title: "Wie viele Minuten brauchst du von dort ({wohnort}) zur HGB?",
       description: `Für Pendler_innen: Diese Frage bezieht sich auf oben benannten "Hauptwohnsitz", nicht deine eventuell existierende Unterkunft in Leipzig.`,
       inputType: "number",
       unit: "Minuten"
     },
     {
-      visibleIf: "({hgb} notempty and {hgb} != \"ja\" and {wohnort} notempty and ({wohnort} != \"andere\" or {other-wohnort} notempty)) or {fahrzeit} notempty",
+      visibleIf: `{hgb} notempty and {hgb} != "ja" and {wohnort} notempty or {fahrzeit} notempty`,
       type: "radiogroup",
       name: "wohnungstyp",
       title: "In was für einer Art von Wohnung lebst du?",
