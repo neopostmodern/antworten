@@ -100,7 +100,7 @@ const questionnaire = {
       type: "text",
       name: "other-institution",
       visibleIf: `{other-position} notempty and {other-job-type} != "frei" and {other-job-type} != "sonstige"`,
-      title: "Wo [[other-job-type:du]] du?"
+      title: "In welcher Stadt [[other-job-type:du]] du?"
     },
     {
       visibleIf: `({hgb} = "ja" and {hgb-position} notempty) or {other-institution} notempty or ({other-position} notempty 
@@ -208,7 +208,39 @@ const questionnaire = {
       ]
     },
     {
-      visibleIf: "{wohnungstyp} notempty and ({wohnungstyp} != \"atelier\" or {zugelassen} notempty)",
+      type: "radiogroup",
+      name: "atelier-kochen",
+      visibleIf: "{zugelassen} = notempty",
+      title: "Hat das Atelier eine Kochmöglichkeit?",
+      choices: [
+        {
+          value: "ja",
+          text: "Ja"
+        },
+        {
+          value: "nein",
+          text: "Nein"
+        }
+      ]
+    },
+    {
+      type: "radiogroup",
+      name: "atelier-duschen",
+      visibleIf: "{atelier-kochen} = notempty",
+      title: "Hat das Atelier eine Duschmöglichkeit?",
+      choices: [
+        {
+          value: "ja",
+          text: "Ja"
+        },
+        {
+          value: "nein",
+          text: "Nein"
+        }
+      ]
+    },
+    {
+      visibleIf: `{wohnungstyp} notempty and ({wohnungstyp} != "atelier" or {atelier-duschen} notempty)`,
       type: "text",
       inputType: "number",
       name: "people",
