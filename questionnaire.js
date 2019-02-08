@@ -316,7 +316,7 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "platz-gesamt",
-      title: "Wie viel Quadratmeter hat [[wohnungstyp:nominativ]]?",
+      title: "Wie viele Quadratmeter hat [[wohnungstyp:nominativ]]?",
       unit: "m²"
     },
     {
@@ -324,7 +324,7 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "platz-privat",
-      title: "Wie viel Quadratmeter hast du für dich?",
+      title: "Wie viele Quadratmeter hast du für dich?",
       description: "Dies bezieht sich auf Raum den nur du verwendest - etwa ein Zimmer in einer WG, aber nicht das Wohnzimmer.",
       unit: "m²"
     },
@@ -333,8 +333,8 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "miete",
-      title: "Wie viel kostet dich deine Wohnsituation monatlich, inklusive alles?",
-      description: "\"Inklusive alles\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
+      title: "Wie viel kostet dich deine Wohnsituation monatlich, inklusive allem?",
+      description: "\"Inklusive allem\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
       "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen.",
       unit: "€"
     },
@@ -376,8 +376,8 @@ const questionnaire = {
       type: "text",
       inputType: "number",
       name: "atelier-miete",
-      title: "Wie viel kostet dich deine Ateliersituation monatlich, inklusive alles?",
-      description: "\"Inklusive alles\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
+      title: "Wie viel kostet dich deine Ateliersituation monatlich, inklusive allem?",
+      description: "\"Inklusive allem\" bezieht sich auf Kaltmiete, Nebenkosten, Heizung, Strom, Gas, " +
       "Internet, et cetera. Pendelkosten oder ähnliches bitte hier nicht einrechnen.",
       unit: "€"
     },
