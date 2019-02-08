@@ -210,7 +210,7 @@ const questionnaire = {
     {
       type: "radiogroup",
       name: "atelier-kochen",
-      visibleIf: "{zugelassen} = notempty",
+      visibleIf: "{zugelassen} notempty",
       title: "Hat das Atelier eine Kochmöglichkeit?",
       choices: [
         {
@@ -226,7 +226,7 @@ const questionnaire = {
     {
       type: "radiogroup",
       name: "atelier-duschen",
-      visibleIf: "{atelier-kochen} = notempty",
+      visibleIf: "{atelier-kochen} notempty",
       title: "Hat das Atelier eine Duschmöglichkeit?",
       choices: [
         {
